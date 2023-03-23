@@ -64,9 +64,9 @@ export class News extends Component {
     this.setState({loading: true});
     let promise = await fetch (url); // waits for the promise to resolve
     let data = await promise.json(); // waits for the resolved promise (response object) to get parsed (converted) to json
+    this.setState({loading: false});
     this.setState({articles: data.articles,
-      totalResults: data.totalResults,
-      loading: false});
+      totalResults: data.totalResults});
   }
 
   handlePreviousClick = async ()=>{
@@ -74,10 +74,10 @@ export class News extends Component {
     this.setState({loading: true});
     let response = await fetch(url);
     let data = await response.json();
+    this.setState({loading: false});
     this.setState({
       page : this.state.page-1,
       articles : data.articles,
-      loading: false
     });
   }
 
@@ -87,10 +87,10 @@ export class News extends Component {
       this.setState({loading: true});
       let response = await fetch(url);
       let data = await response.json();
+      this.setState({loading: false});
       this.setState({
         page : this.state.page+1,
         articles : data.articles,
-        laoding: false
       });
     }
   }
