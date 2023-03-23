@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import Newsitem from './Newsitem';
 import Spinner from './Spinner';
 
@@ -58,9 +59,17 @@ export class News extends Component {
       loading : false
     }
   }
+  static defaultProps = {
+    category : 'general',
+    pageSize : 9
+  }
+  static propTypes = {
+    category : PropTypes.string,
+    pageSize : PropTypes.number,
+  }
 
   async componentDidMount(){
-    let url = `https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=1d5133a5b4a343c48dde6f55eb629005&page=1&pageSize=${this.props.pageSize}`;
+    let url = `https://newsapi.org/v2/top-headlines?country=us&category=${this.props.category}&apiKey=1d5133a5b4a343c48dde6f55eb629005&page=1&pageSize=${this.props.pageSize}`;
     this.setState({loading: true});
     let promise = await fetch (url); // waits for the promise to resolve
     let data = await promise.json(); // waits for the resolved promise (response object) to get parsed (converted) to json
@@ -70,7 +79,7 @@ export class News extends Component {
   }
 
   handlePreviousClick = async ()=>{
-    let url = `https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=1d5133a5b4a343c48dde6f55eb629005&page=${this.state.page-1}&pageSize=${this.props.pageSize}`;
+    let url = `https://newsapi.org/v2/top-headlines?country=us&category=${this.props.category}&apiKey=1d5133a5b4a343c48dde6f55eb629005&page=${this.state.page-1}&pageSize=${this.props.pageSize}`;
     this.setState({loading: true});
     let response = await fetch(url);
     let data = await response.json();
@@ -83,7 +92,7 @@ export class News extends Component {
 
   handleNextClick = async ()=>{
     if (this.state.page+1 <= Math.ceil((this.state.totalResults/ this.props.pageSize))){
-      let url = `https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=1d5133a5b4a343c48dde6f55eb629005&page=${this.state.page+1}&pageSize=${this.props.pageSize}`;
+      let url = `https://newsapi.org/v2/top-headlines?country=us&category=${this.props.category}&apiKey=1d5133a5b4a343c48dde6f55eb629005&page=${this.state.page+1}&pageSize=${this.props.pageSize}`;
       this.setState({loading: true});
       let response = await fetch(url);
       let data = await response.json();
@@ -98,7 +107,7 @@ export class News extends Component {
   render() {
     return (
       <div className='container my-3'>
-        <h2 className='text-center'>Top headlines...</h2>
+        <h2 className='text-center' style={{margin : '30px 0px'}}>Top picks of the day</h2>
         {this.state.loading && <Spinner/>}
         <div className='row'>
           {!this.state.loading && this.state.articles.map((element)=>{
@@ -108,13 +117,12 @@ export class News extends Component {
           })}
         </div>
         <div className="container d-flex justify-content-between my-3" style={{padding : '0px'}}>
-        <button type="button" disabled={this.state.page <= 1} className="btn btn-primary" onClick={this.handlePreviousClick}> &larr; Previous</button>
-        <button type="button" disabled={this.state.page+1 > Math.ceil((this.state.totalResults/ this.props.pageSize))}className="btn btn-primary" onClick={this.handleNextClick}>Next &rarr;</button>
+        {!this.state.loading && <button type="button" disabled={this.state.page <= 1} className="btn btn-primary" onClick={this.handlePreviousClick}> &larr; Previous</button>}
+        {!this.state.loading && <button type="button" disabled={this.state.page+1 > Math.ceil((this.state.totalResults/ this.props.pageSize))}className="btn btn-primary" onClick={this.handleNextClick}>Next &rarr;</button>}
         </div>
       </div>
     )
   }
 }
-
 
 export default News
