@@ -18,6 +18,10 @@ export class App extends Component {
           <Route exact path='/technology' element={<News pageSize={9} key='technology' category='technology'/>} />
         </Routes>
       </BrowserRouter>
+      // here key prop is passed to the News component, so that react router remounts the News component
+      // with the changed value of the 'category' prop.
+      // key is a prop that has to be any unique entity for each time
+      // for details, see code with harry react tutorial video #31
     )
   }
 }

@@ -112,7 +112,9 @@ export class News extends Component {
         <div className='row'>
           {!this.state.loading && this.state.articles.map((element)=>{
             return (<div className='col-md-4' key={element.url}> {/*while using map, each item should have a unique key, so here element.url is made as that unique key*/}
-              <Newsitem heading={element.title?element.title.slice(0, 45):""} description={element.description?element.description.slice(0, 95):""} newsUrl = {element.url ? element.url : "/"} imageUrl = {element.urlToImage ? element.urlToImage : "https://assets-varnish.triblive.com/2023/03/6014801_web1_web-PghSky.jpg"}></Newsitem>
+              <Newsitem heading={element.title?element.title.slice(0, 45):""} description={element.description?element.description.slice(0, 95):""} 
+              newsUrl = {element.url ? element.url : "/"} imageUrl = {element.urlToImage ? element.urlToImage : "https://assets-varnish.triblive.com/2023/03/6014801_web1_web-PghSky.jpg"}
+              author={!element.author ? 'Unknown' : element.author} date={element.publishedAt}></Newsitem>
             </div>)
           })}
         </div>
