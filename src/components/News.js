@@ -68,7 +68,7 @@ export class News extends Component {
     pageSize : PropTypes.number,
   }
 
-  async componentDidMount(){
+  async updateNews(){
     let url = `https://newsapi.org/v2/top-headlines?country=us&category=${this.props.category}&apiKey=1d5133a5b4a343c48dde6f55eb629005&page=1&pageSize=${this.props.pageSize}`;
     this.setState({loading: true});
     let promise = await fetch (url); // waits for the promise to resolve
@@ -78,30 +78,18 @@ export class News extends Component {
       totalResults: data.totalResults});
   }
 
+  async componentDidMount(){
+    this.updateNews();
+  }
+
   handlePreviousClick = async ()=>{
-    let url = `https://newsapi.org/v2/top-headlines?country=us&category=${this.props.category}&apiKey=1d5133a5b4a343c48dde6f55eb629005&page=${this.state.page-1}&pageSize=${this.props.pageSize}`;
-    this.setState({loading: true});
-    let response = await fetch(url);
-    let data = await response.json();
-    this.setState({loading: false});
-    this.setState({
-      page : this.state.page-1,
-      articles : data.articles,
-    });
+    this.setState({page: this.state.page-1});
+    this.updateNews();
   }
 
   handleNextClick = async ()=>{
-    if (this.state.page+1 <= Math.ceil((this.state.totalResults/ this.props.pageSize))){
-      let url = `https://newsapi.org/v2/top-headlines?country=us&category=${this.props.category}&apiKey=1d5133a5b4a343c48dde6f55eb629005&page=${this.state.page+1}&pageSize=${this.props.pageSize}`;
-      this.setState({loading: true});
-      let response = await fetch(url);
-      let data = await response.json();
-      this.setState({loading: false});
-      this.setState({
-        page : this.state.page+1,
-        articles : data.articles,
-      });
-    }
+    this.setState({page: this.state.page+1});
+    this.updateNews();
   }
             
   render() {
@@ -114,7 +102,7 @@ export class News extends Component {
             return (<div className='col-md-4' key={element.url}> {/*while using map, each item should have a unique key, so here element.url is made as that unique key*/}
               <Newsitem heading={element.title?element.title.slice(0, 45):""} description={element.description?element.description.slice(0, 95):""} 
               newsUrl = {element.url ? element.url : "/"} imageUrl = {element.urlToImage ? element.urlToImage : "https://assets-varnish.triblive.com/2023/03/6014801_web1_web-PghSky.jpg"}
-              author={!element.author ? 'Unknown' : element.author} date={element.publishedAt}></Newsitem>
+              author={!element.author ? 'Unknown' : element.author} date={element.publishedAt} source={element.source.name}></Newsitem>
             </div>)
           })}
         </div>

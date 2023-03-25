@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
 export class navbar extends Component {
-  handleClick = (id)=>{
-    
+  handleClick = (clicked_id)=>{
+
   };
   render() {
     return (
@@ -11,7 +11,7 @@ export class navbar extends Component {
         <nav className="navbar navbar-expand-lg bg-body-tertiary">
           <div className="container-fluid">
             <Link className="navbar-brand" to="/">
-              Navbar
+              NewsMonkey
             </Link>
             <button
               className="navbar-toggler"
@@ -30,27 +30,27 @@ export class navbar extends Component {
             >
               <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                 <li className="nav-item">
-                  <Link className="nav-link" aria-current="page" id="home" to="/" onClick={this.handleClick('home')}>
+                  <Link className="nav-link active" aria-current="page" id="home" to="/" onClick={this.handleClick(this.id)}>
                     Home
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" id="business" to="/business" onClick={this.handleClick('business')}>Business</Link>
+                  <Link className="nav-link" id="business" to="/business" onClick={this.handleClick(this.id)}>Business</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" id="entertainment" to="/entertainment" onClick={this.handleClick('entertainment')}>Entertainment</Link>
+                  <Link className="nav-link" id="entertainment" to="/entertainment" onClick={this.handleClick(this.id)}>Entertainment</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" id="health" to="/health" onClick={this.handleClick('health')}>Health</Link>
+                  <Link className="nav-link" id="health" to="/health" onClick={this.handleClick(this.id)}>Health</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" id="science" to="/science" onClick={this.handleClick('science')}>Science</Link>
+                  <Link className="nav-link" id="science" to="/science" onClick={this.handleClick(this.id)}>Science</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" id="sports" to="/sports" onClick={this.handleClick('sports')}>Sports</Link>
+                  <Link className="nav-link" id="sports" to="/sports" onClick={this.handleClick(this.id)}>Sports</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" id="technology" to="/technology" onClick={this.handleClick('technology')}>Technology</Link>
+                  <Link className="nav-link" id="technology" to="/technology" onClick={this.handleClick(this.id)}>Technology</Link>
                 </li>
               </ul>
             </div>
