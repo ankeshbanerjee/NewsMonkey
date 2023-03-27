@@ -67,8 +67,9 @@ export class News extends Component {
     category : PropTypes.string,
     pageSize : PropTypes.number,
   }
-
+  
   async updateNews(){
+    document.title = `${(this.props.category === 'general')? 'Home' : this.capitalizeFirstLetter(this.props.category)} - NewsMonkey`;
     let url = `https://newsapi.org/v2/top-headlines?country=us&category=${this.props.category}&apiKey=1d5133a5b4a343c48dde6f55eb629005&page=1&pageSize=${this.props.pageSize}`;
     this.setState({loading: true});
     let promise = await fetch (url); // waits for the promise to resolve
@@ -76,8 +77,10 @@ export class News extends Component {
     this.setState({loading: false});
     this.setState({articles: data.articles,
       totalResults: data.totalResults});
+    }
+  capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
-
   async componentDidMount(){
     this.updateNews();
   }
@@ -95,7 +98,7 @@ export class News extends Component {
   render() {
     return (
       <div className='container my-3'>
-        <h2 className='text-center' style={{margin : '30px 0px'}}>Top picks of the day</h2>
+        <h2 className='text-center' style={{margin : '30px 0px'}}>Top picks of the day from {this.capitalizeFirstLetter(this.props.category)}</h2>
         {this.state.loading && <Spinner/>}
         <div className='row'>
           {!this.state.loading && this.state.articles.map((element)=>{
