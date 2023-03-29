@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Newsitem from './Newsitem';
 import Spinner from './Spinner';
+import InfiniteScroll from "react-infinite-scroll-component";
 
 export class News extends Component {
   /*
@@ -56,7 +57,8 @@ export class News extends Component {
       // articles : this.articles
       articles : [],
       page : 1,
-      loading : false
+      loading : true,
+      totalResults : 0
     }
   }
   static defaultProps = {
@@ -76,44 +78,70 @@ export class News extends Component {
     let data = await promise.json(); // waits for the resolved promise (response object) to get parsed (converted) to json
     this.setState({loading: false});
     this.setState({articles: data.articles,
-      totalResults: data.totalResults});
-    }
+      totalResults: data.totalResults,
+    });
+  }
+
   capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
   async componentDidMount(){
     this.updateNews();
+    this.setState({page : this.state.page + 1});
   }
+ 
+  // handlePreviousClick = async ()=>{
+  //   this.setState({page: this.state.page-1});
+  //   this.updateNews();
+  // }
 
-  handlePreviousClick = async ()=>{
-    this.setState({page: this.state.page-1});
-    this.updateNews();
-  }
+  // handleNextClick = async ()=>{
+  //   this.setState({page: this.state.page+1});
+  //   this.updateNews();
+  // }
 
-  handleNextClick = async ()=>{
-    this.setState({page: this.state.page+1});
-    this.updateNews();
+  fetchMoreData = async ()=>{
+    this.setState({page : this.state.page + 1})
+    let url = `https://newsapi.org/v2/top-headlines?country=us&category=${this.props.category}&apiKey=1d5133a5b4a343c48dde6f55eb629005&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+    let promise = await fetch(url);
+    let data = await promise.json();
+    this.setState({
+      articles : this.state.articles.concat(data.articles),
+      totalResults : data.totalResults
+    })
   }
             
   render() {
     return (
-      <div className='container my-3'>
+      <>
         <h2 className='text-center' style={{margin : '30px 0px'}}>Top picks of the day from {this.capitalizeFirstLetter(this.props.category)}</h2>
         {this.state.loading && <Spinner/>}
-        <div className='row'>
-          {!this.state.loading && this.state.articles.map((element)=>{
-            return (<div className='col-md-4' key={element.url}> {/*while using map, each item should have a unique key, so here element.url is made as that unique key*/}
-              <Newsitem heading={element.title?element.title.slice(0, 45):""} description={element.description?element.description.slice(0, 95):""} 
-              newsUrl = {element.url ? element.url : "/"} imageUrl = {element.urlToImage ? element.urlToImage : "https://assets-varnish.triblive.com/2023/03/6014801_web1_web-PghSky.jpg"}
-              author={!element.author ? 'Unknown' : element.author} date={element.publishedAt} source={element.source.name}></Newsitem>
-            </div>)
-          })}
+        <InfiniteScroll
+          dataLength={this.state.articles.length}
+          next={this.fetchMoreData}
+          hasMore={(this.state.articles.length < this.state.totalResults) ? true : false}
+          loader={<Spinner/>}
+        >
+        {console.log(this.state.page)}
+        <div className="container"> {/*to remove the horizontal scrollbar coming with infinite scroll, we need to wrap all the elements inside a div.container*/}
+          <div className='row'>
+            {this.state.articles.map((element)=>{
+              return (<div className='col-md-4' key={element.url}> {/*while using map, each item should have a unique key, so here element.url is made as that unique key*/}
+                <Newsitem heading={element.title?element.title.slice(0, 45):""} description={element.description?element.description.slice(0, 95):""} 
+                newsUrl = {element.url ? element.url : "/"} imageUrl = {element.urlToImage ? element.urlToImage : "https://assets-varnish.triblive.com/2023/03/6014801_web1_web-PghSky.jpg"}
+                author={!element.author ? 'Unknown' : element.author} date={element.publishedAt} source={element.source.name}></Newsitem>
+              </div>)
+            })}
+          </div>
         </div>
-        <div className="container d-flex justify-content-between my-3" style={{padding : '0px'}}>
+        {console.log(this.state.articles.length)}
+        {console.log(this.state.totalResults)}
+        </InfiniteScroll>
+        {/* <div className="container d-flex justify-content-between my-3" style={{padding : '0px'}}>
         {!this.state.loading && <button type="button" disabled={this.state.page <= 1} className="btn btn-primary" onClick={this.handlePreviousClick}> &larr; Previous</button>}
         {!this.state.loading && <button type="button" disabled={this.state.page+1 > Math.ceil((this.state.totalResults/ this.props.pageSize))}className="btn btn-primary" onClick={this.handleNextClick}>Next &rarr;</button>}
-        </div>
-      </div>
+        </div> */}
+      </>
     )
   }
 }

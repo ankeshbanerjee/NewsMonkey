@@ -18,7 +18,7 @@ export class Newsitem extends Component {
             <p className="card-text">
               {description}...
             </p>
-            <p class="card-text"><small className="text-body-secondary">By {author} on {new Date(date).toUTCString()}</small></p>
+            <p className="card-text"><small className="text-body-secondary">By {author} on {new Date(date).toUTCString()}</small></p>
             <div className="text-center">
               <a href={newsUrl} className="btn btn-primary ">
                 Read More
