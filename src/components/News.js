@@ -65,7 +65,8 @@ export class News extends Component {
   }
   static defaultProps = {
     category : 'general',
-    pageSize : 9
+    pageSize : 9,
+    apiKey : process.env.REACT_APP_NEWS_API_KEY
   }
   static propTypes = {
     category : PropTypes.string,
@@ -75,7 +76,7 @@ export class News extends Component {
   async updateNews(){
     this.props.setProgress(20);
     document.title = `${(this.props.category === 'general')? 'Home' : this.capitalizeFirstLetter(this.props.category)} - NewsMonkey`;
-    let url = `https://newsapi.org/v2/top-headlines?country=us&category=${this.props.category}&apiKey=1d5133a5b4a343c48dde6f55eb629005&page=1&pageSize=${this.props.pageSize}`;
+    let url = `https://newsapi.org/v2/top-headlines?country=us&category=${this.props.category}&apiKey=${this.props.apiKey}&page=1&pageSize=${this.props.pageSize}`;
     this.setState({loading: true});
     let promise = await fetch (url); // waits for the promise to resolve
     let data = await promise.json(); // waits for the resolved promise (response object) to get parsed (converted) to json
@@ -106,7 +107,7 @@ export class News extends Component {
 
   fetchMoreData = async ()=>{
     this.setState({page : this.state.page + 1})
-    let url = `https://newsapi.org/v2/top-headlines?country=us&category=${this.props.category}&apiKey=1d5133a5b4a343c48dde6f55eb629005&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+    let url = `https://newsapi.org/v2/top-headlines?country=us&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
     let promise = await fetch(url);
     let data = await promise.json();
     this.setState({
