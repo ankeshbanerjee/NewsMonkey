@@ -1,9 +1,7 @@
-import React, { Component } from "react";
+import React from "react";
 
-export class Newsitem extends Component {
-  render() {
-    let { heading, description, newsUrl, imageUrl, author, date, source } =
-      this.props;
+const Newsitem = (props)=> {
+    let { heading, description, newsUrl, imageUrl, author, date, source } = props;
     // destructuring in javascript: the new way of assigning array items to a variable, think of it as the items inside curly braces are props
     // it avoids writing this.props. repeatedly and make the code look cleaner
     return (
@@ -34,7 +32,6 @@ export class Newsitem extends Component {
           </div>
       </div>
     );
-  }
 }
 
 export default Newsitem;

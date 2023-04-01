@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import Newsitem from './Newsitem';
 import Spinner from './Spinner';
@@ -6,7 +6,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import SampleImg from '../sample_img.jpg'
 
 
-export class News extends Component {
+const News = (props)=> {
   /*
   articles = [
     {
@@ -53,47 +53,52 @@ export class News extends Component {
 
   // to utilize state of the component, we always need to define the constructor of this class component
   // while writing constructor, it is must to call the constructor of super class, otherwise it will show error in console
-  constructor(){
-    super();
-    this.state={
-      // articles : this.articles
-      articles : [],
-      page : 1,
-      loading : true,
-      totalResults : 0
-    }
-  }
-  static defaultProps = {
-    category : 'general',
-    pageSize : 9,
-    apiKey : process.env.REACT_APP_NEWS_API_KEY
-  }
-  static propTypes = {
-    category : PropTypes.string,
-    pageSize : PropTypes.number,
-  }
-  
-  async updateNews(){
-    this.props.setProgress(20);
-    document.title = `${(this.props.category === 'general')? 'Home' : this.capitalizeFirstLetter(this.props.category)} - NewsMonkey`;
-    let url = `https://newsapi.org/v2/top-headlines?country=us&category=${this.props.category}&apiKey=${this.props.apiKey}&page=1&pageSize=${this.props.pageSize}`;
-    this.setState({loading: true});
-    let promise = await fetch (url); // waits for the promise to resolve
-    let data = await promise.json(); // waits for the resolved promise (response object) to get parsed (converted) to json
-    this.setState({loading: false});
-    this.setState({articles: data.articles,
-      totalResults: data.totalResults,
-    });
-    this.props.setProgress(100);
-  }
+  // constructor(){
+  //   super();
+  //   this.state={
+  //     // articles : this.articles
+  //     articles : [],
+  //     page : 1,
+  //     loading : true,
+  //     totalResults : 0
+  //   }
+  // }
 
-  capitalizeFirstLetter(string) {
+  const [articles, setarticles] = useState([]);
+  const [page, setpage] = useState(1);
+  const [loading, setloading] = useState(true);
+  const [totalResults, settotalResults] = useState(0);
+
+  const capitalizeFirstLetter = (string)=> {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
-  async componentDidMount(){
-    this.updateNews();
-    this.setState({page : this.state.page + 1});
+
+  const updateNews = async()=>{
+    props.setProgress(10);
+    document.title = `${(props.category === 'general')? 'Home' : capitalizeFirstLetter(props.category)} - NewsMonkey`;
+    let url = `https://newsapi.org/v2/top-headlines?country=us&category=${props.category}&apiKey=${props.apiKey}&page=1&pageSize=${props.pageSize}`;
+    setloading(true);
+    let promise = await fetch (url); // waits for the promise to resolve
+    props.setProgress(30);
+    let data = await promise.json(); // waits for the resolved promise (response object) to get parsed (converted) to json
+    props.setProgress(70)
+    setloading(false);
+    setarticles(data.articles);
+    settotalResults(data.totalResults);
+    props.setProgress(100);// for debugging, idk why :)
   }
+
+  // in functional component, useEffect does the job of ComponentDidMount of class component
+  // read w3school documentation of useEffect hook
+  useEffect(() => {
+    updateNews();
+    // eslint-disable-next-line
+  }, [])
+  
+  // async componentDidMount(){
+  //   this.updateNews();
+  //   this.setState({page : this.state.page + 1});
+  // }
  
   // handlePreviousClick = async ()=>{
   //   this.setState({page: this.state.page-1});
@@ -105,32 +110,28 @@ export class News extends Component {
   //   this.updateNews();
   // }
 
-  fetchMoreData = async ()=>{
-    this.setState({page : this.state.page + 1})
-    let url = `https://newsapi.org/v2/top-headlines?country=us&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+  const fetchMoreData = async ()=>{
+    let url = `https://newsapi.org/v2/top-headlines?country=us&category=${props.category}&apiKey=${props.apiKey}&page=${page+1}&pageSize=${props.pageSize}`;
+    setpage(page+1); // setpage is an async function, so it takes time to update the page, but before that updation, url is already fetched, so same news gets rendered again and again, so, in the above line, page=${page+1} is done
     let promise = await fetch(url);
     let data = await promise.json();
-    this.setState({
-      articles : this.state.articles.concat(data.articles),
-      totalResults : data.totalResults
-    })
-  }
-            
-  render() {
+    setarticles(articles.concat(data.articles));
+    settotalResults(data.totalResults);
+  }       
     return (
       <>
-        <h2 className='text-center' style={{margin : '30px 0px'}}>Top picks of the day from {this.capitalizeFirstLetter(this.props.category)}</h2>
-        {this.state.loading && <Spinner/>}
+        <h2 className='text-center' style={{margin : '77px 0px 19px 0px'}}>Top picks of the day from {capitalizeFirstLetter(props.category)}</h2>
+        {loading && <Spinner/>}
         <InfiniteScroll
-          dataLength={this.state.articles.length}
-          next={this.fetchMoreData}
-          hasMore={(this.state.articles.length < this.state.totalResults) ? true : false}
+          dataLength={articles.length}
+          next={fetchMoreData}
+          hasMore={(articles.length < totalResults) ? true : false}
           loader={<Spinner/>}
         >
         {/* {console.log(this.state.page)} */}
         <div className="container"> {/*to remove the horizontal scrollbar coming with infinite scroll, we need to wrap all the elements inside a div.container*/}
           <div className='row'>
-            {this.state.articles.map((element)=>{
+            {articles.map((element)=>{
               return (<div className='col-md-4' key={element.url}> {/*while using map, each item should have a unique key, so here element.url is made as that unique key*/}
                 <Newsitem heading={element.title?element.title.slice(0, 45):""} description={element.description?element.description.slice(0, 95):""} 
                 newsUrl = {element.url ? element.url : "/"} imageUrl = {element.urlToImage ? element.urlToImage : SampleImg}
@@ -139,16 +140,25 @@ export class News extends Component {
             })}
           </div>
         </div>
-        {/* {console.log(this.state.articles.length)}
-        {console.log(this.state.totalResults)} */}
+        {/* {console.log(articles.length)}
+        {console.log(totalResults)} */}
         </InfiniteScroll>
         {/* <div className="container d-flex justify-content-between my-3" style={{padding : '0px'}}>
         {!this.state.loading && <button type="button" disabled={this.state.page <= 1} className="btn btn-primary" onClick={this.handlePreviousClick}> &larr; Previous</button>}
-        {!this.state.loading && <button type="button" disabled={this.state.page+1 > Math.ceil((this.state.totalResults/ this.props.pageSize))}className="btn btn-primary" onClick={this.handleNextClick}>Next &rarr;</button>}
+        {!this.state.loading && <button type="button" disabled={this.state.page+1 > Math.ceil((this.state.totalResults/ props.pageSize))}className="btn btn-primary" onClick={this.handleNextClick}>Next &rarr;</button>}
         </div> */}
       </>
     )
-  }
+}
+
+News.defaultProps = {
+  category : 'general',
+  pageSize : 9,
+  apiKey : process.env.REACT_APP_NEWS_API_KEY
+}
+News.propTypes = {
+  category : PropTypes.string,
+  pageSize : PropTypes.number,
 }
 
 export default News

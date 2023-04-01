@@ -1,14 +1,10 @@
-import React, { Component } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
-export class navbar extends Component {
-  handleClick = (clicked_id)=>{
-
-  };
-  render() {
+const navbar = ()=>{
     return (
       <div>
-        <nav className="navbar navbar-expand-lg bg-body-tertiary">
+        <nav className="navbar navbar-expand-lg fixed-top bg-body-tertiary">
           <div className="container-fluid">
             <Link className="navbar-brand" to="/">
               NewsMonkey
@@ -30,27 +26,27 @@ export class navbar extends Component {
             >
               <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                 <li className="nav-item">
-                  <Link className="nav-link active" aria-current="page" id="home" to="/" onClick={this.handleClick(this.id)}>
+                  <Link className="nav-link active" aria-current="page" to="/">
                     Home
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" id="business" to="/business" onClick={this.handleClick(this.id)}>Business</Link>
+                  <Link className="nav-link" to="/business">Business</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" id="entertainment" to="/entertainment" onClick={this.handleClick(this.id)}>Entertainment</Link>
+                  <Link className="nav-link" to="/entertainment">Entertainment</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" id="health" to="/health" onClick={this.handleClick(this.id)}>Health</Link>
+                  <Link className="nav-link"to="/health">Health</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" id="science" to="/science" onClick={this.handleClick(this.id)}>Science</Link>
+                  <Link className="nav-link" to="/science">Science</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" id="sports" to="/sports" onClick={this.handleClick(this.id)}>Sports</Link>
+                  <Link className="nav-link" to="/sports">Sports</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" id="technology" to="/technology" onClick={this.handleClick(this.id)}>Technology</Link>
+                  <Link className="nav-link" to="/technology">Technology</Link>
                 </li>
               </ul>
             </div>
@@ -58,7 +54,6 @@ export class navbar extends Component {
         </nav>
       </div>
     );
-  }
 }
 
 export default navbar;
