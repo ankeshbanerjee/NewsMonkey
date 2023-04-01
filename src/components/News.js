@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import Newsitem from './Newsitem';
 import Spinner from './Spinner';
 import InfiniteScroll from "react-infinite-scroll-component";
+import SampleImg from '../sample_img.jpg'
+
 
 export class News extends Component {
   /*
@@ -71,6 +73,7 @@ export class News extends Component {
   }
   
   async updateNews(){
+    this.props.setProgress(20);
     document.title = `${(this.props.category === 'general')? 'Home' : this.capitalizeFirstLetter(this.props.category)} - NewsMonkey`;
     let url = `https://newsapi.org/v2/top-headlines?country=us&category=${this.props.category}&apiKey=1d5133a5b4a343c48dde6f55eb629005&page=1&pageSize=${this.props.pageSize}`;
     this.setState({loading: true});
@@ -80,6 +83,7 @@ export class News extends Component {
     this.setState({articles: data.articles,
       totalResults: data.totalResults,
     });
+    this.props.setProgress(100);
   }
 
   capitalizeFirstLetter(string) {
@@ -122,20 +126,20 @@ export class News extends Component {
           hasMore={(this.state.articles.length < this.state.totalResults) ? true : false}
           loader={<Spinner/>}
         >
-        {console.log(this.state.page)}
+        {/* {console.log(this.state.page)} */}
         <div className="container"> {/*to remove the horizontal scrollbar coming with infinite scroll, we need to wrap all the elements inside a div.container*/}
           <div className='row'>
             {this.state.articles.map((element)=>{
               return (<div className='col-md-4' key={element.url}> {/*while using map, each item should have a unique key, so here element.url is made as that unique key*/}
                 <Newsitem heading={element.title?element.title.slice(0, 45):""} description={element.description?element.description.slice(0, 95):""} 
-                newsUrl = {element.url ? element.url : "/"} imageUrl = {element.urlToImage ? element.urlToImage : "https://assets-varnish.triblive.com/2023/03/6014801_web1_web-PghSky.jpg"}
+                newsUrl = {element.url ? element.url : "/"} imageUrl = {element.urlToImage ? element.urlToImage : SampleImg}
                 author={!element.author ? 'Unknown' : element.author} date={element.publishedAt} source={element.source.name}></Newsitem>
               </div>)
             })}
           </div>
         </div>
-        {console.log(this.state.articles.length)}
-        {console.log(this.state.totalResults)}
+        {/* {console.log(this.state.articles.length)}
+        {console.log(this.state.totalResults)} */}
         </InfiniteScroll>
         {/* <div className="container d-flex justify-content-between my-3" style={{padding : '0px'}}>
         {!this.state.loading && <button type="button" disabled={this.state.page <= 1} className="btn btn-primary" onClick={this.handlePreviousClick}> &larr; Previous</button>}
